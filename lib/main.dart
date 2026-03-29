@@ -1,6 +1,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
+import 'dart:developer';
+import 'package:http/http.dart' as http;
+
+Future<void> sendJoystickToArduino(int x, int y) async {
+  final ipArduino = '172.20.10.11'; // IP reale di Arduino
+  final url = Uri.parse('http://$ipArduino/?x=$x&y=$y');
+
+  try {
+    await http.get(url);
+  } catch (e) {
+    log('Errore invio comandi: $e'); // qui uso log() invece di print()
+  }
+}
 
 void main() {
   runApp(const JoystickExampleApp());
