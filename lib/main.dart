@@ -1,26 +1,108 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
-import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'dart:developer';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:logging/logging.dart';
 
-Future<void> sendJoystickToArduino(int x, int y) async {
-  final ipArduino = '172.20.10.11'; // IP reale di Arduino
-  final url = Uri.parse('http://$ipArduino/?x=$x&y=$y');
+/*
+final channel = WebSocketChannel.connect(
+  Uri.parse('ws://172.20.10.13:81'),
+);
+*/
+late WebSocketChannel channel;
 
+final Logger logger = Logger('JoystickLogger');
+
+void connectWebSocket() {
   try {
-    await http.get(url);
+    channel = WebSocketChannel.connect(
+      Uri.parse('ws://192.168.1.21:81'),
+    );
+
+    channel.stream.listen(
+      (message) {
+        logger.info("Ricevuto: $message");
+      },
+      onDone: () {
+        logger.warning("Connessione chiusa, ritento...");
+        reconnect();
+      },
+      onError: (error) {
+        logger.severe("Errore: $error");
+        reconnect();
+      },
+    );
   } catch (e) {
-    log('Errore invio comandi: $e'); // qui uso log() invece di print()
+    logger.severe("Connessione fallita: $e");
+    reconnect();
   }
 }
 
+void reconnect() {
+  Future.delayed(Duration(seconds: 2), () {
+    connectWebSocket();
+  });
+}
+
+
+
+void setupLogging() {
+  Logger.root.level = Level.ALL; // tutto, dai debug agli errori
+  Logger.root.onRecord.listen((record) {
+    // qui puoi decidere come loggare: console, file, ecc.
+    //print('${record.level.name}: ${record.time}: ${record.message}');
+  });
+}
+
+int lastSent = 0;
+
+void sendJoystick(int x, int y) {
+  final now = DateTime.now().millisecondsSinceEpoch;
+
+  if (now - lastSent < 30) return; // ⛔ max 20 comandi/sec
+
+  lastSent = now;
+
+  sendJoystickToArduino(x, y);
+}
+
+Future<void> sendJoystickToArduino(int x, int y) async {
+  final ipArduino = '172.20.10.13:81'; // IP reale di Arduino
+  final url = Uri.parse('http://$ipArduino/?x=$x&y=$y');
+
+  try {
+    http.get(url);
+  } catch (e) {
+    log('Errore invio comandi: $e');
+  }
+}
+
+void sendJoystickData(WebSocketChannel channel, x, int y) {
+  channel.sink.add("$x,$y");
+  log("Invio dati: $x,$y");
+}
+
+void sendMessageToESP32(WebSocketChannel channel, {int? x, int? y, bool special = false}) {
+  if (special) {
+    channel.sink.add("channelsing.ad");
+  } else if (x != null && y != null) {
+    channel.sink.add("$x,$y");
+  }
+}
+
+int lastX = 127;
+int lastY = 127;
+
 void main() {
+  setupLogging(); // ✅ inizializza il logger
   runApp(const JoystickExampleApp());
 }
 
 const ballSize = 20.0;
 const step = 10.0;
+
 
 class JoystickExampleApp extends StatelessWidget {
   const JoystickExampleApp({super.key});
@@ -102,9 +184,18 @@ class JoystickExample extends StatefulWidget {
 }
 
 class _JoystickExampleState extends State<JoystickExample> {
+  // ignore: unused_field
   double _x = 100;
+  // ignore: unused_field, prefer_final_fields
   double _y = 100;
   JoystickMode _joystickMode = JoystickMode.all;
+  
+
+  @override
+  void initState() {
+  super.initState();
+  connectWebSocket();
+  }
 
   @override
   void didChangeDependencies() {
@@ -132,16 +223,26 @@ class _JoystickExampleState extends State<JoystickExample> {
       body: SafeArea(
         child: Stack(
           children: [
-            Ball(_x, _y),
+            //Ball(_x, _y),
             Align(
               alignment: const Alignment(0, 0.8),
               child: Joystick(
                 mode: _joystickMode,
+
                 listener: (details) {
-                  setState(() {
-                    _x = _x + step * details.x;
-                    _y = _y + step * details.y;
-                  });
+
+                  int joyX = ((details.x + 1) * 127.5).toInt();
+                  int joyY = ((-details.y + 1) * 127.5).toInt();
+                  
+                  
+                  //commenta
+                  // invia solo se cambia abbastanza
+                  if ((joyX - lastX).abs() > 5 || (joyY - lastY).abs() > 5) {
+                    sendJoystickData(channel, joyX, joyY);
+                    
+                    lastX = joyX;
+                    lastY = joyY;
+                  }
                 },
               ),
             ),
@@ -229,7 +330,7 @@ class _JoystickCustomizationExampleState
       body: SafeArea(
         child: Stack(
           children: [
-            Ball(_x, _y),
+            //Ball(_x, _y),
             Align(
               alignment: const Alignment(0, 0.9),
               child: Row(
@@ -263,7 +364,7 @@ class _JoystickCustomizationExampleState
                     ),
                     mode: _joystickMode,
                     listener: (details) {
-                      setState(() {
+                      setState(() {//-----------------------------------------------------------------------
                         _x = _x + step * details.x;
                         _y = _y + step * details.y;
                       });
@@ -354,7 +455,7 @@ class _JoystickAreaExampleState extends State<JoystickAreaExample> {
           },
           child: Stack(
             children: [
-              Ball(_x, _y),
+              //Ball(_x, _y),
             ],
           ),
         ),
@@ -401,7 +502,7 @@ class _SquareJoystickExampleState extends State<SquareJoystickExample> {
       body: SafeArea(
         child: Stack(
           children: [
-            Ball(_x, _y),
+            //Ball(_x, _y),
             Align(
               alignment: const Alignment(0, 0.8),
               child: Joystick(
