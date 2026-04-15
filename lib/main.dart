@@ -150,16 +150,7 @@ class MainPage extends StatelessWidget {
             },
             label: 'Joystick Area',
           ),
-          Button(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const SquareJoystickExample()),
-              );
-            },
-            label: 'Square Joystick',
-          ),
+          /*non lo tolgo nel caso voglio personalizzare
           Button(
             onPressed: () {
               Navigator.push(
@@ -170,6 +161,7 @@ class MainPage extends StatelessWidget {
             },
             label: 'Customization',
           ),
+          */
         ],
       ),
     );
@@ -201,14 +193,7 @@ class _JoystickExampleState extends State<JoystickExample> {
       appBar: AppBar(
         title: const Text('Joystick'),
         actions: [
-          JoystickModeDropdown(
-            mode: _joystickMode,
-            onChanged: (JoystickMode value) {
-              setState(() {
-                _joystickMode = value;
-              });
-            },
-          ),
+
         ],
       ),
       body: SafeArea(
@@ -242,7 +227,7 @@ class _JoystickExampleState extends State<JoystickExample> {
     );
   }
 }
-
+/* non lo tolgo nel caso voglio personalizzare
 class JoystickCustomizationExample extends StatefulWidget {
   const JoystickCustomizationExample({super.key});
 
@@ -250,7 +235,7 @@ class JoystickCustomizationExample extends StatefulWidget {
   State<JoystickCustomizationExample> createState() =>
       _JoystickCustomizationExampleState();
 }
-
+//questo nell a customizzazione che rimuoverò
 class _JoystickCustomizationExampleState
     extends State<JoystickCustomizationExample> {
 
@@ -301,14 +286,7 @@ class _JoystickCustomizationExampleState
       appBar: AppBar(
         title: const Text('Customization'),
         actions: [
-          JoystickModeDropdown(
-            mode: _joystickMode,
-            onChanged: (JoystickMode value) {
-              setState(() {
-                _joystickMode = value;
-              });
-            },
-          ),
+
         ],
       ),
       body: SafeArea(
@@ -387,7 +365,7 @@ class _JoystickCustomizationExampleState
     );
   }
 }
-
+*/
 class JoystickAreaExample extends StatefulWidget {
   const JoystickAreaExample({super.key});
 
@@ -406,14 +384,7 @@ class _JoystickAreaExampleState extends State<JoystickAreaExample> {
       appBar: AppBar(
         title: const Text('Joystick Area'),
         actions: [
-          JoystickModeDropdown(
-            mode: _joystickMode,
-            onChanged: (JoystickMode value) {
-              setState(() {
-                _joystickMode = value;
-              });
-            },
-          ),
+
         ],
       ),
       body: SafeArea(
@@ -424,8 +395,7 @@ class _JoystickAreaExampleState extends State<JoystickAreaExample> {
             
                   int joyX = ((details.x + 1) * 127.5).toInt();
                   int joyY = ((-details.y + 1) * 127.5).toInt();
-                  
-                  
+
                   //commenta
                   // invia solo se cambia abbastanza
                   if ((joyX - lastX).abs() > 5 || (joyY - lastY).abs() > 5) {
@@ -445,95 +415,6 @@ class _JoystickAreaExampleState extends State<JoystickAreaExample> {
   }
 }
 
-class SquareJoystickExample extends StatefulWidget {
-  const SquareJoystickExample({super.key});
-
-  @override
-  State<SquareJoystickExample> createState() => _SquareJoystickExampleState();
-}
-
-class _SquareJoystickExampleState extends State<SquareJoystickExample> {
-
-  JoystickMode _joystickMode = JoystickMode.all;
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      appBar: AppBar(
-        title: const Text('Square Joystick'),
-        actions: [
-          JoystickModeDropdown(
-            mode: _joystickMode,
-            onChanged: (JoystickMode value) {
-              setState(() {
-                _joystickMode = value;
-              });
-            },
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-
-            Align(
-              alignment: const Alignment(0, 0.8),
-              child: Joystick(
-                mode: _joystickMode,
-                base: JoystickSquareBase(
-                  mode: _joystickMode,
-                ),
-                stickOffsetCalculator: const RectangleStickOffsetCalculator(),
-                listener: (details) {
-
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class JoystickModeDropdown extends StatelessWidget {
-  final JoystickMode mode;
-  final ValueChanged<JoystickMode> onChanged;
-
-  const JoystickModeDropdown(
-      {super.key, required this.mode, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 150,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16.0),
-        child: FittedBox(
-          child: DropdownButton(
-            value: mode,
-            onChanged: (v) {
-              onChanged(v as JoystickMode);
-            },
-            items: const [
-              DropdownMenuItem(
-                  value: JoystickMode.all, child: Text('All Directions')),
-              DropdownMenuItem(
-                  value: JoystickMode.horizontalAndVertical,
-                  child: Text('Vertical And Horizontal')),
-              DropdownMenuItem(
-                  value: JoystickMode.horizontal, child: Text('Horizontal')),
-              DropdownMenuItem(
-                  value: JoystickMode.vertical, child: Text('Vertical')),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class Button extends StatelessWidget {
   final String label;
