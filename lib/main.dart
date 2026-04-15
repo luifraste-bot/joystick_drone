@@ -18,7 +18,7 @@ final Logger logger = Logger('JoystickLogger');
 void connectWebSocket() {
   try {
     channel = WebSocketChannel.connect(
-      Uri.parse('ws://192.168.1.13:81'),
+      Uri.parse('ws://192.168.1.16:81'),
     );
 
     channel.stream.listen(
@@ -184,10 +184,7 @@ class JoystickExample extends StatefulWidget {
 }
 
 class _JoystickExampleState extends State<JoystickExample> {
-  // ignore: unused_field
-  double _x = 100;
-  // ignore: unused_field, prefer_final_fields
-  double _y = 100;
+
   JoystickMode _joystickMode = JoystickMode.all;
   
 
@@ -195,12 +192,6 @@ class _JoystickExampleState extends State<JoystickExample> {
   void initState() {
   super.initState();
   connectWebSocket();
-  }
-
-  @override
-  void didChangeDependencies() {
-    _x = MediaQuery.of(context).size.width / 2 - ballSize / 2;
-    super.didChangeDependencies();
   }
 
   @override
@@ -223,10 +214,9 @@ class _JoystickExampleState extends State<JoystickExample> {
       body: SafeArea(
         child: Stack(
           children: [
-            //Ball(_x, _y),
             Align(
               alignment: const Alignment(0, 0.8),
-              child: Joystick(
+              child: Joystick(//--------------------------------------------------------------------
                 mode: _joystickMode,
 
                 listener: (details) {
@@ -263,8 +253,7 @@ class JoystickCustomizationExample extends StatefulWidget {
 
 class _JoystickCustomizationExampleState
     extends State<JoystickCustomizationExample> {
-  double _x = 100;
-  double _y = 100;
+
   JoystickMode _joystickMode = JoystickMode.all;
   bool drawArrows = true;
   bool includeInitialAnimation = true;
@@ -273,11 +262,6 @@ class _JoystickCustomizationExampleState
   bool withOuterCircle = false;
   Key key = UniqueKey();
 
-  @override
-  void didChangeDependencies() {
-    _x = MediaQuery.of(context).size.width / 2 - ballSize / 2;
-    super.didChangeDependencies();
-  }
 
   void _updateDrawArrows() {
     setState(() {
@@ -330,7 +314,6 @@ class _JoystickCustomizationExampleState
       body: SafeArea(
         child: Stack(
           children: [
-            //Ball(_x, _y),
             Align(
               alignment: const Alignment(0, 0.9),
               child: Row(
@@ -364,10 +347,7 @@ class _JoystickCustomizationExampleState
                     ),
                     mode: _joystickMode,
                     listener: (details) {
-                      setState(() {//-----------------------------------------------------------------------
-                        _x = _x + step * details.x;
-                        _y = _y + step * details.y;
-                      });
+
                     },
                   ),
                   SingleChildScrollView(
@@ -416,15 +396,8 @@ class JoystickAreaExample extends StatefulWidget {
 }
 
 class _JoystickAreaExampleState extends State<JoystickAreaExample> {
-  double _x = 100;
-  double _y = 100;
-  JoystickMode _joystickMode = JoystickMode.all;
 
-  @override
-  void didChangeDependencies() {
-    _x = MediaQuery.of(context).size.width / 2 - ballSize / 2;
-    super.didChangeDependencies();
-  }
+  JoystickMode _joystickMode = JoystickMode.all;
 
   @override
   Widget build(BuildContext context) {
@@ -448,14 +421,22 @@ class _JoystickAreaExampleState extends State<JoystickAreaExample> {
           mode: _joystickMode,
           initialJoystickAlignment: const Alignment(0, 0.8),
           listener: (details) {
-            setState(() {
-              _x = _x + step * details.x;
-              _y = _y + step * details.y;
-            });
+            
+                  int joyX = ((details.x + 1) * 127.5).toInt();
+                  int joyY = ((-details.y + 1) * 127.5).toInt();
+                  
+                  
+                  //commenta
+                  // invia solo se cambia abbastanza
+                  if ((joyX - lastX).abs() > 5 || (joyY - lastY).abs() > 5) {
+                    sendJoystickData(channel, joyX, joyY);
+                    
+                    lastX = joyX;
+                    lastY = joyY;
+                  }
           },
           child: Stack(
             children: [
-              //Ball(_x, _y),
             ],
           ),
         ),
@@ -472,15 +453,9 @@ class SquareJoystickExample extends StatefulWidget {
 }
 
 class _SquareJoystickExampleState extends State<SquareJoystickExample> {
-  double _x = 100;
-  double _y = 100;
+
   JoystickMode _joystickMode = JoystickMode.all;
 
-  @override
-  void didChangeDependencies() {
-    _x = MediaQuery.of(context).size.width / 2 - ballSize / 2;
-    super.didChangeDependencies();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -502,7 +477,7 @@ class _SquareJoystickExampleState extends State<SquareJoystickExample> {
       body: SafeArea(
         child: Stack(
           children: [
-            //Ball(_x, _y),
+
             Align(
               alignment: const Alignment(0, 0.8),
               child: Joystick(
@@ -512,10 +487,7 @@ class _SquareJoystickExampleState extends State<SquareJoystickExample> {
                 ),
                 stickOffsetCalculator: const RectangleStickOffsetCalculator(),
                 listener: (details) {
-                  setState(() {
-                    _x = _x + step * details.x;
-                    _y = _y + step * details.y;
-                  });
+
                 },
               ),
             ),
@@ -576,37 +548,6 @@ class Button extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         child: Text(label),
-      ),
-    );
-  }
-}
-
-class Ball extends StatelessWidget {
-  final double x;
-  final double y;
-
-  const Ball(this.x, this.y, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: x,
-      top: y,
-      child: Container(
-        width: ballSize,
-        height: ballSize,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.redAccent,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              spreadRadius: 2,
-              blurRadius: 3,
-              offset: Offset(0, 3),
-            )
-          ],
-        ),
       ),
     );
   }
