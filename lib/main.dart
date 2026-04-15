@@ -18,7 +18,7 @@ final Logger logger = Logger('JoystickLogger');
 void connectWebSocket() {
   try {
     channel = WebSocketChannel.connect(
-      Uri.parse('ws://172.20.10.13:81'),
+      Uri.parse('ws://192.168.1.13:81'),
     );
 
     channel.stream.listen(
