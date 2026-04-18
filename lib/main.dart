@@ -141,15 +141,16 @@ class MainPage extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Container(
         alignment: Alignment.center,
-        width: 450,
+        width: 300,
         color: Color(0xff2f4e63),
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            //SizedBox(height: 20),
             SizedBox(
-              width: 300,
-              height: 300,
+              width: 150,
+              height: 150,
               child: Button(
                   onPressed: () {
                     Navigator.push(
@@ -161,10 +162,10 @@ class MainPage extends StatelessWidget {
                 label: 'Joystick',
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 15),
             SizedBox(
-              width: 300,
-              height: 300,
+              width: 150,
+              height: 150,
               child: Button(
                 onPressed: () {
                   Navigator.push(
@@ -180,11 +181,11 @@ class MainPage extends StatelessWidget {
           ),
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 15),
             //non lo tolgo nel caso voglio personalizzare
             SizedBox(
-              width: 300,
-              height: 150,
+              width: 200,
+              height: 80,
               child: Button(
                 
                 onPressed: () {
