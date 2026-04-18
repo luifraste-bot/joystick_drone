@@ -97,7 +97,7 @@ int lastX = 127;
 int lastY = 127;
 
 void main() {
-  setupLogging(); // ✅ inizializza il logger
+  setupLogging(); //inizializza il logger
   runApp(const JoystickExampleApp());
 }
 
@@ -112,6 +112,7 @@ class JoystickExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: const Color(0xff181f2a),
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 39, 37, 37),
           leadingWidth: 20,
@@ -135,17 +136,20 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Padding(
-        padding: EdgeInsets.only(right: 60),
-        child: Column(
+    // ignore: sized_box_for_whitespace
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Container(
+        alignment: Alignment.center,
+        width: 450,
+        color: Color(0xff2f4e63),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: 200,
-              height: 60,
+              width: 300,
+              height: 300,
               child: Button(
                   onPressed: () {
                     Navigator.push(
@@ -157,10 +161,10 @@ class MainPage extends StatelessWidget {
                 label: 'Joystick',
               ),
             ),
-            SizedBox(height: 80),
+            SizedBox(height: 40),
             SizedBox(
-              width: 200,
-              height: 60,
+              width: 300,
+              height: 300,
               child: Button(
                 onPressed: () {
                   Navigator.push(
@@ -169,15 +173,20 @@ class MainPage extends StatelessWidget {
                         builder: (context) => const JoystickAreaExample()),
                   );
                 },
-                label: 'Joystick Area',
+                label: 'Drone',
+                child: Image.asset(
+                'images/GUI_drone.png',
+                fit: BoxFit.cover,
+          ),
               ),
             ),
-            SizedBox(height: 80),
+            SizedBox(height: 40),
             //non lo tolgo nel caso voglio personalizzare
             SizedBox(
-              width: 200,
-              height: 60,
+              width: 300,
+              height: 150,
               child: Button(
+                
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -185,11 +194,12 @@ class MainPage extends StatelessWidget {
                         builder: (context) => const JoystickCustomizationExample()),
                   );
                 },
+                
                 label: 'Customization',
               ),
             ),
           ],
-        ),      
+        ),       
       ),
     );
   }
@@ -216,7 +226,7 @@ class _JoystickExampleState extends State<JoystickExample> {//------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0x00181f2a),
+      //backgroundColor: Color(0x00181f2a),
       appBar: AppBar(
         title: const Text('Joystick'),
         actions: [
@@ -428,10 +438,11 @@ class _JoystickAreaExampleState extends State<JoystickAreaExample> {
 
 
 class Button extends StatelessWidget {
-  final String label;
+  final String label;// questi sono gli attributi
   final VoidCallback? onPressed;
+  final Widget? child;
 
-  const Button({super.key, required this.label, this.onPressed});
+  const Button({super.key, required this.label, this.onPressed, this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -440,18 +451,32 @@ class Button extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),
           backgroundColor: Color(0x0004288d)
         ),
-        child: Text(
+        child:child ?? Text( // vuoldire child (ovvero l'immagino) o il testo
           label,
           style: TextStyle(
             color: Colors.white,
           ),
         ),
-      ),
-    );
+        )
+      );
   }
 }
+/*
+
+child: Image.asset(
+          'images/GUI_drone.png',
+          fit: BoxFit.cover,
+          /*
+          label,
+          style: TextStyle(
+            color: Colors.white,
+            */
+          ),
+
+          */
