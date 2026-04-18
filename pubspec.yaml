@@ -38,6 +38,8 @@ dependencies:
   http: ^1.6.0
   web_socket_channel: ^3.0.3
   logging: ^1.3.0
+  flutter_native_splash: ^2.4.7
+  flutter_launcher_icons: ^0.14.4
   
 dev_dependencies:
   flutter_test:
@@ -50,6 +52,22 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
 
+flutter_native_splash:
+  color: '0d0d0d'
+  color_dark: '0d0d0d'
+  image: images/dokkaebi_icon.png
+  android_12:
+    image: images/dokkaebi_icon.png
+  ios: true  
+
+flutter_launcher_icons:
+    android: true
+    ios: true  
+
+    image_path: "images/icon_dokk.png"
+    
+    adaptive_icon_foreground: "images/icon_dokk.png"
+    adaptive_icon_background: "#0d0d0d"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -59,11 +77,9 @@ flutter:
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
-  uses-material-design: true
-
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+    uses-material-design: true
+    assets:
+      - images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -18,7 +18,8 @@ final Logger logger = Logger('JoystickLogger');
 void connectWebSocket() {
   try {
     channel = WebSocketChannel.connect(
-      Uri.parse('ws://192.168.1.16:81'),
+     //Uri.parse('ws://192.168.1.16:81'), //hotspot computer scuola
+      Uri.parse('ws://192.168.1.13:81'),
     );
 
     channel.stream.listen(
@@ -112,7 +113,16 @@ class JoystickExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Joystick Example'),
+          backgroundColor: const Color.fromARGB(255, 39, 37, 37),
+          leadingWidth: 20,
+          toolbarHeight: 40,
+            title: const Text(
+              'I/O LOCK ||||||||| S 34ms',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+          ),//piu avanti metti un vero contatre di connessione 
         ),
         body: const MainPage(),
       ),
@@ -127,42 +137,59 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Button(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const JoystickExample()),
-              );
-            },
-            label: 'Joystick',
-          ),
-          Button(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const JoystickAreaExample()),
-              );
-            },
-            label: 'Joystick Area',
-          ),
-          /*non lo tolgo nel caso voglio personalizzare
-          Button(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const JoystickCustomizationExample()),
-              );
-            },
-            label: 'Customization',
-          ),
-          */
-        ],
+      child: Padding(
+        padding: EdgeInsets.only(right: 60),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 200,
+              height: 60,
+              child: Button(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const JoystickExample()),
+                    );
+                  }, 
+                label: 'Joystick',
+              ),
+            ),
+            SizedBox(height: 80),
+            SizedBox(
+              width: 200,
+              height: 60,
+              child: Button(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const JoystickAreaExample()),
+                  );
+                },
+                label: 'Joystick Area',
+              ),
+            ),
+            SizedBox(height: 80),
+            //non lo tolgo nel caso voglio personalizzare
+            SizedBox(
+              width: 200,
+              height: 60,
+              child: Button(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const JoystickCustomizationExample()),
+                  );
+                },
+                label: 'Customization',
+              ),
+            ),
+          ],
+        ),      
       ),
     );
   }
@@ -175,9 +202,9 @@ class JoystickExample extends StatefulWidget {
   State<JoystickExample> createState() => _JoystickExampleState();
 }
 
-class _JoystickExampleState extends State<JoystickExample> {
+class _JoystickExampleState extends State<JoystickExample> {//----------------------------------------
 
-  JoystickMode _joystickMode = JoystickMode.all;
+  final JoystickMode _joystickMode = JoystickMode.all;
   
 
   @override
@@ -189,7 +216,7 @@ class _JoystickExampleState extends State<JoystickExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: Color(0x00181f2a),
       appBar: AppBar(
         title: const Text('Joystick'),
         actions: [
@@ -219,6 +246,7 @@ class _JoystickExampleState extends State<JoystickExample> {
                     lastY = joyY;
                   }
                 },
+                includeInitialAnimation: true,
               ),
             ),
           ],
@@ -227,32 +255,29 @@ class _JoystickExampleState extends State<JoystickExample> {
     );
   }
 }
-/* non lo tolgo nel caso voglio personalizzare
+
+ //non lo tolgo nel caso voglio personalizzare
 class JoystickCustomizationExample extends StatefulWidget {
   const JoystickCustomizationExample({super.key});
 
   @override
   State<JoystickCustomizationExample> createState() =>
-      _JoystickCustomizationExampleState();
+    _JoystickCustomizationExampleState();
 }
+
 //questo nell a customizzazione che rimuoverò
 class _JoystickCustomizationExampleState
     extends State<JoystickCustomizationExample> {
 
-  JoystickMode _joystickMode = JoystickMode.all;
-  bool drawArrows = true;
-  bool includeInitialAnimation = true;
+  final JoystickMode _joystickMode = JoystickMode.all;
+  
+  bool includeInitialAnimation = false;
   bool enableArrowAnimation = false;
   bool isBlueJoystick = false;
-  bool withOuterCircle = false;
+
   Key key = UniqueKey();
 
 
-  void _updateDrawArrows() {
-    setState(() {
-      drawArrows = !drawArrows;
-    });
-  }
 
   void _updateInitialAnimation() {
     setState(() {
@@ -270,12 +295,6 @@ class _JoystickCustomizationExampleState
   void _updateArrowAnimation() {
     setState(() {
       enableArrowAnimation = !enableArrowAnimation;
-    });
-  }
-
-  void _updateBorderCircle() {
-    setState(() {
-      withOuterCircle = !withOuterCircle;
     });
   }
 
@@ -306,8 +325,7 @@ class _JoystickCustomizationExampleState
                         color: isBlueJoystick
                             ? Colors.lightBlue.shade600
                             : Colors.black,
-                        drawArrows: drawArrows,
-                        drawOuterCircle: withOuterCircle,
+                      
                       ),
                       arrowsDecoration: JoystickArrowsDecoration(
                         color: isBlueJoystick
@@ -322,6 +340,7 @@ class _JoystickCustomizationExampleState
                           color: isBlueJoystick
                               ? Colors.blue.shade600
                               : Colors.blue.shade700),
+
                     ),
                     mode: _joystickMode,
                     listener: (details) {
@@ -335,14 +354,6 @@ class _JoystickCustomizationExampleState
                         Button(
                           label: 'Initial Animation: $includeInitialAnimation',
                           onPressed: _updateInitialAnimation,
-                        ),
-                        Button(
-                          label: 'Draw Arrows: $drawArrows',
-                          onPressed: _updateDrawArrows,
-                        ),
-                        Button(
-                          label: 'Draw Outer Circle: $withOuterCircle',
-                          onPressed: _updateBorderCircle,
                         ),
                         Button(
                           label:
@@ -365,7 +376,7 @@ class _JoystickCustomizationExampleState
     );
   }
 }
-*/
+
 class JoystickAreaExample extends StatefulWidget {
   const JoystickAreaExample({super.key});
 
@@ -375,7 +386,7 @@ class JoystickAreaExample extends StatefulWidget {
 
 class _JoystickAreaExampleState extends State<JoystickAreaExample> {
 
-  JoystickMode _joystickMode = JoystickMode.all;
+  final JoystickMode _joystickMode = JoystickMode.all;
 
   @override
   Widget build(BuildContext context) {
@@ -428,7 +439,18 @@ class Button extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: ElevatedButton(
         onPressed: onPressed,
-        child: Text(label),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          backgroundColor: Color(0x0004288d)
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
