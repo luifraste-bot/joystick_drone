@@ -119,7 +119,7 @@ class JoystickExampleApp extends StatelessWidget {
           toolbarHeight: 40,
             title: const Text(
               'I/O LOCK ||||||||| S 34ms',
-              style: TextStyle(
+                style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
               ),
@@ -147,10 +147,11 @@ class MainPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            //SizedBox(height: 20),
-            SizedBox(
-              width: 150,
-              height: 150,
+            Padding(
+            padding: EdgeInsets.only(top: 0),
+            child: SizedBox(
+              width: 180,
+              height: 180,
               child: Button(
                   onPressed: () {
                     Navigator.push(
@@ -162,10 +163,11 @@ class MainPage extends StatelessWidget {
                 label: 'Joystick',
               ),
             ),
+          ),
             SizedBox(height: 15),
             SizedBox(
-              width: 150,
-              height: 150,
+              width: 180,
+              height: 180,
               child: Button(
                 onPressed: () {
                   Navigator.push(
@@ -174,18 +176,18 @@ class MainPage extends StatelessWidget {
                         builder: (context) => const JoystickAreaExample()),
                   );
                 },
-                label: 'Drone',
-                child: Image.asset(
-                'images/GUI_drone.png',
-                fit: BoxFit.cover,
-          ),
+                  label: 'Drone',
+                  child: Image.asset(
+                  'images/GUI_drone.png',
+                  fit: BoxFit.cover,
+                  ),
               ),
             ),
             SizedBox(height: 15),
             //non lo tolgo nel caso voglio personalizzare
             SizedBox(
-              width: 200,
-              height: 80,
+              width: 180,
+              height: 90,
               child: Button(
                 
                 onPressed: () {
@@ -402,12 +404,22 @@ class _JoystickAreaExampleState extends State<JoystickAreaExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+     backgroundColor: const Color(0xff181f2a),
       appBar: AppBar(
-        title: const Text('Joystick Area'),
-        actions: [
+        foregroundColor: Color(0Xffffffff),
+        backgroundColor: const Color.fromARGB(255, 39, 37, 37),
+        leadingWidth: 20,
+        toolbarHeight: 40,
+          title: const Text(
+              'Drone',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+          actions: [
 
-        ],
+          ],
       ),
       body: SafeArea(
         child: JoystickArea(
@@ -458,6 +470,7 @@ class Button extends StatelessWidget {
           ),
           backgroundColor: Color(0x0004288d)
         ),
+        
         child:child ?? Text( // vuoldire child (ovvero l'immagino) o il testo
           label,
           style: TextStyle(
