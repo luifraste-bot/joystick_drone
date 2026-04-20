@@ -1,11 +1,13 @@
 
+//import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:logging/logging.dart';
-
+//import 'dart:math';
 /*
 final channel = WebSocketChannel.connect(
   Uri.parse('ws://172.20.10.13:81'),
@@ -114,8 +116,13 @@ class JoystickExampleApp extends StatelessWidget {
       home: Scaffold(
         backgroundColor: const Color(0xff181f2a),
         appBar: AppBar(
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 250),
+                child: BatteryIndicator(89),
+            )
+          ],
           backgroundColor: const Color.fromARGB(255, 39, 37, 37),
-          leadingWidth: 20,
           toolbarHeight: 40,
             title: const Text(
               'I/O LOCK ||||||||| S 34ms',
@@ -141,7 +148,7 @@ class MainPage extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Container(
         alignment: Alignment.center,
-        width: 300,
+        width: 250,//larghezza del div laterale
         color: Color(0xff2f4e63),
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -164,7 +171,7 @@ class MainPage extends StatelessWidget {
               ),
             ),
           ),
-            SizedBox(height: 15),
+            SizedBox(height: 60),
             SizedBox(
               width: 180,
               height: 180,
@@ -183,7 +190,7 @@ class MainPage extends StatelessWidget {
                   ),
               ),
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 60),
             //non lo tolgo nel caso voglio personalizzare
             SizedBox(
               width: 180,
@@ -449,6 +456,39 @@ class _JoystickAreaExampleState extends State<JoystickAreaExample> {
   }
 }
 
+// ignore: non_constant_identifier_names
+Widget BatteryIndicator(double percent){
+  return Row(//contiene testo e batteria
+    mainAxisSize: MainAxisSize.min,
+    children: [ 
+      Text( 
+        "${percent.toInt()}%",
+        style: TextStyle(color: Colors.white, fontSize: 22),
+      ),
+
+      SizedBox(width: 6),
+
+      Container(
+        width: 40,
+        height: 18,//18 perche metto il bordo di 2 pixel
+        padding: EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          border: Border.all(color:Colors.white, width: 2),
+          borderRadius: BorderRadius.circular(3),
+        ),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: FractionallySizedBox(
+            widthFactor: percent/100,
+            child: Container(
+              color: Color.fromRGBO(245, 158, 28, 1),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
 
 class Button extends StatelessWidget {
   final String label;// questi sono gli attributi
@@ -465,6 +505,10 @@ class Button extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.zero,
+          side: BorderSide(
+            color: Color.fromRGBO(245, 158, 28, 1),
+            width: 4,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),
